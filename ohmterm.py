@@ -8,12 +8,13 @@ except:
     print ("Tkinter lib is missing.")
     sys.exit()
   
+import configparser
 
-
-import settings
 import inputSerial
+import inputUDP
+import inputTester
 import filter
-
+import mainWindow
 
 
 
@@ -27,14 +28,42 @@ betaFlag = True
 
 
 
-root = Tk()
 
 
 class OhmTerm(object):
   """docstring for OhmTerm"""
   datastore = []
+  settingsFileName = "config.ini"
 
 
   def __init__(self):
+    print ("OhmTerm.__init__(self)")
     super(OhmTerm, self).__init__()
+
+    self.settings = configparser.ConfigParser()
+    self.settings.read(self.settingsFileName)
+
+
+    self.root = Tk()
+    self.root.protocol("WM_DELETE_WINDOW", self.killProgram)
+    # self.root.geometry("1150x900")
+    self.root.geometry(self.settings.get('main', 'geometry', fallback='1150x900') )
+
+    self.mainwindow = mainWindow.mainWindow(self.root, "main", self.datastore, self.settings)
+
+    self.root.mainloop()
+    pass
     
+  def killProgram(self):
+    print ("OhmTerm.killProgram()")
+    self.mainwindow.kill()
+
+    self.writeConfig()
+
+  def writeConfig(self):
+    fil = open(self.settingsFileName, 'w')
+    self.settings.write(fil)
+    fil.close()
+
+
+ohmTermApp = OhmTerm()

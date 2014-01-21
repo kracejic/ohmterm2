@@ -12,11 +12,17 @@ except:
 import genericinput
 
 
-class Input(genericinput.Input):
-  """docstring for Input"""
+# 21.02.2012 16:12:15.984 009907 MenuProc        DEBUG: ** evMenuProcConfirmCmd (scheduled)
+# 21.02.2012 16:12:15.994 009908 MenuProc        DEBUG: << evMenuProcConfirmCmd (consumed)
+# 21.02.2012 16:12:16.005 009909 MenuProc        DEBUG: -MenuOpened: Selection -> Confirm
+# 21.02.2012 16:12:16.909 009916 MenuProc        DEBUG: ** evMenuProcExecuteCmd (scheduled)
+# 21.02.2012 16:12:16.919 009917 MenuProc        DEBUG: << evMenuProcExecuteCmd (consumed)
+
+class InputSerial(genericinput.Input):
+  """docstring for InputSerial"""
   connected = False;
   def __init__(self):
-    super(Input, self).__init__()
+    super(InputSerial, self).__init__()
 
 
   def open(self, adress):
