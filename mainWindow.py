@@ -18,15 +18,17 @@ import tkinter.font
 
 class mainWindow(object):
   """docstring for mainWindow"""
-  def __init__(self, root, myType, datastore, settings):
+  def __init__(self, root, myType, datastore, settings, ohmterm):
     super(mainWindow, self).__init__()
     self.master = root;
     self.datastore = datastore;
     self.settings = settings;
     self.myType = myType
+    self.ohmterm = ohmterm
 
 
-    self.CreateGUI_ComPort()
+    if self.myType == "main":
+      self.CreateGUI_ComPort()
     self.CreateGUI_List()
     
 
@@ -87,7 +89,8 @@ class mainWindow(object):
     ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
 
 
-
+  def connect(self):
+    #self.ohmterm.inputer()
 
 
 

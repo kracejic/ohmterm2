@@ -43,16 +43,25 @@ class OhmTerm(object):
     self.settings = configparser.ConfigParser()
     self.settings.read(self.settingsFileName)
 
+    #creating input
+    self.inputer = inputTester.InputTester()
+
 
     self.root = Tk()
     self.root.protocol("WM_DELETE_WINDOW", self.killProgram)
     # self.root.geometry("1150x900")
     self.root.geometry(self.settings.get('main', 'geometry', fallback='1150x900') )
 
-    self.mainwindow = mainWindow.mainWindow(self.root, "main", self.datastore, self.settings)
+
+    #creating mainwindow
+    self.mainwindow = mainWindow.mainWindow(self.root, "main", self.datastore, self.settings, self)
+
+
 
     self.root.mainloop()
     pass
+
+
     
   def killProgram(self):
     print ("OhmTerm.killProgram()")
