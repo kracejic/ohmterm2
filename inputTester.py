@@ -5,10 +5,13 @@ import genericinput
 class InputTester(genericinput.Input):
   """docstring for InputTester"""
   connected = False;
-  def __init__(self):
-    super(InputTester, self).__init__()
+  kind = "test"
 
-  def open(self, adress):
+  def __init__(self, settings):
+    super(InputTester, self).__init__(settings)
+
+  def open(self, address):
+    self.settings[self.kind]['address'] = address
     self.connected = True
     return True
 
@@ -25,7 +28,7 @@ class InputTester(genericinput.Input):
       return []
     data = []
 
-
+    #TODO make data
 
 
 

@@ -5,10 +5,13 @@ import genericinput
 class InputUDP(genericinput.Input):
   """docstring for InputUDP"""
   connected = False;
-  def __init__(self):
-    super(InputUDP, self).__init__()
+  kind = "udp"
 
-  def open(self, adress):
+  def __init__(self, settings):
+    super(InputUDP, self).__init__(settings)
+
+  def open(self, address):
+    self.settings[self.kind]['address'] = address
     return False
 
   def close(self):

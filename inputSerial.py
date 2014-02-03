@@ -20,18 +20,26 @@ import genericinput
 
 class InputSerial(genericinput.Input):
   """docstring for InputSerial"""
+  kind = "com"
+
   connected = False;
-  def __init__(self):
-    super(InputSerial, self).__init__()
+  def __init__(self, settings):
+    super(InputSerial, self).__init__(settings)
 
 
-  def open(self, adress):
+  def open(self, address):
     try:
-      self.ser = serial.Serial(int(adress), 115200, timeout=0.02, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)  # open first serial port
+      adr = int(address)
+    except:
+      print ("ERROR InputSerial.open(address): Address not INT: '" + address +"'")
+
+    try:
+      self.ser = serial.Serial(int(address), 115200, timeout=0.02, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)  # open first serial port
     except:
       return False
     # check which port was really used
     print ("Trying to connect to: ", port, ". Portstr: ", self.ser.portstr)       
+    self.settings[self.kind]['address'] = address
     self.connected = True
     return True
   
@@ -42,7 +50,6 @@ class InputSerial(genericinput.Input):
 
   def getStatus(self):
     return self.connected
-  
 
   def getData(self):
     output = []

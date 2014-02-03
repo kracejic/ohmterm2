@@ -75,22 +75,36 @@ class mainWindow(object):
     print ("mainWindow.CreateGUI_ComPort(self)")
     Label(self.master, text="Port:").grid(row=10, column=10)
     self.editboxPort = Entry(self.master, width=3);
-    self.editboxPort.insert(0,"1");
+    self.editboxPort.insert(0,self.ohmterm.inputer.getAddress());
     self.editboxPort.grid(row=10, column=20)
     ToolTip( self.editboxPort, msg="Enter some port number.", follow=True, delay=1.2)
     
     
-    self.buttonPortConnect = Button(self.master, text="Connect", fg="red", bg="#eebbbb", height=0)
+    self.buttonPortConnect = Button(self.master, text="Connect", fg="red", bg="#eebbbb", height=0, command=self.connect)
     self.buttonPortConnect.grid(row=10, column=30, padx=5)
     ToolTip( self.buttonPortConnect, msg="Connect to COM Port. If this is blue, app is probably connected.", follow=True, delay=1.2)
     
     self.checkBoxAutoconnect = Checkbutton(self.master, text="Autoconnect")
     self.checkBoxAutoconnect.grid(row=10, column=31)
     ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
+    self.checkConnected()
 
+
+  def checkConnected(self):
+    if self.ohmterm.inputer.getStatus():
+        self.buttonPortConnect.config(text="Disconect ("+self.ohmterm.inputer.getKind()+")", fg="black", bg="#55dd55")
+        return True
+    else:
+        self.buttonPortConnect.config(text="Connect ("+self.ohmterm.inputer.getKind()+")", fg="red", bg="#eebbbb")
+        return False
 
   def connect(self):
-    #self.ohmterm.inputer()
+    if self.checkConnected():
+        self.ohmterm.inputer.close()
+    else:
+        self.ohmterm.inputer.open(self.editboxPort.get())
+    
+    self.checkConnected()
 
 
 

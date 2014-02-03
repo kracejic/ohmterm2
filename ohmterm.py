@@ -10,9 +10,7 @@ except:
   
 import configparser
 
-import inputSerial
-import inputUDP
-import inputTester
+import inputStrategy
 import filter
 import mainWindow
 
@@ -42,9 +40,13 @@ class OhmTerm(object):
 
     self.settings = configparser.ConfigParser()
     self.settings.read(self.settingsFileName)
+    self.recreateSettings()
+
 
     #creating input
-    self.inputer = inputTester.InputTester()
+    self.inputer = inputStrategy.InputStrategy(self.settings)
+
+
 
 
     self.root = Tk()
@@ -66,13 +68,26 @@ class OhmTerm(object):
   def killProgram(self):
     print ("OhmTerm.killProgram()")
     self.mainwindow.kill()
-
     self.writeConfig()
 
   def writeConfig(self):
     fil = open(self.settingsFileName, 'w')
     self.settings.write(fil)
     fil.close()
+
+
+  def createSettingsIfNotExisted(self, paragraph):
+    if (paragraph in self.settings) == False:
+      print("Creating settings: " + paragraph)
+      self.settings[paragraph] = {}
+
+  def recreateSettings(self):
+    self.createSettingsIfNotExisted("main")
+    self.createSettingsIfNotExisted("input")
+    self.createSettingsIfNotExisted("test")
+    self.createSettingsIfNotExisted("none")
+    self.createSettingsIfNotExisted("udp")
+    self.createSettingsIfNotExisted("com")
 
 
 ohmTermApp = OhmTerm()
