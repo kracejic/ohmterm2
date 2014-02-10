@@ -3,34 +3,34 @@ import genericinput
 
 
 class InputUDP(genericinput.Input):
-  """docstring for InputUDP"""
-  connected = False;
-  kind = "udp"
+    """docstring for InputUDP"""
+    connected = False;
+    kind = "udp"
 
-  def __init__(self, settings):
-    super(InputUDP, self).__init__(settings)
+    def __init__(self, settings):
+        super(InputUDP, self).__init__(settings)
 
-  def open(self, address):
-    self.settings[self.kind]['address'] = address
-    return False
+    def open(self, address):
+        self.settings[self.kind]['address'] = address
+        return False
 
-  def close(self):
-    self.connected = False
-    pass
+    def close(self):
+        self.connected = False
+        pass
 
-  def getStatus(self):
-    return False
-    
-  def getData(self):
-    #if not connected, go away
-    if self.connected == False:
-      return []
-    data = []
+    def getStatus(self):
+        return False
+        
+    def getData(self):
+        #if not connected, go away
+        if self.connected == False:
+            return []
+        data = []
 
 
 
-    return data
-    
+        return data
+        
 
 # import socket
 

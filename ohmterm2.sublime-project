@@ -2,17 +2,16 @@
 	"folders":
 	[
 		{
-			"follow_symlinks": true,
-			"path": "."
+			"path": ".",
 		}
 	],
    "build_systems":
   [
-      {
-          "name": "Ohmterm",
-          "shell": true,
-          "working_dir": "${project_path}",
-          "cmd": ["python","ohmterm.py"]
-      }
+    {
+      "name": "Ohmterm",
+      "shell": true,
+      "working_dir": "${project_path}",
+      "cmd": ["python3 ohmterm.py"]
+    }
   ],
 }

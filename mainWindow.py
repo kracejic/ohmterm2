@@ -1,11 +1,11 @@
 try:
-  from tkinter import *
+    from tkinter import *
 except:
-  try:
-      from Tkinter import *
-  except:
-    print ("Tkinter lib is missing.")
-    sys.exit()
+    try:
+        from Tkinter import *
+    except:
+        print ("Tkinter lib is missing.")
+        sys.exit()
 from toolTip import *
 
 
@@ -14,129 +14,135 @@ import filter
 
 
 
-
+def defaultEditBox(self):
+    self.config()
+def defaultButton(self):
+    self.config()
+def defaultListBox(self):
+    self.config(bg="#FFFFFF")
 
 
 class mainWindow(object):
-  """docstring for mainWindow"""
-  def __init__(self, root, myType, datastore, settings, ohmterm):
-    super(mainWindow, self).__init__()
-    self.master = root;
-    self.datastore = datastore;
-    self.settings = settings;
-    self.myType = myType
-    self.ohmterm = ohmterm
-    print ("mainWindow.__init__(myType="+myType+")")
+    """docstring for mainWindow"""
+    def __init__(self, root, myType, datastore, settings, ohmterm):
+        super(mainWindow, self).__init__()
+        self.master = root;
+        self.datastore = datastore;
+        self.settings = settings;
+        self.myType = myType
+        self.ohmterm = ohmterm
+        print ("mainWindow.__init__(myType="+myType+")")
 
-    self.filtr = filter.Filter(settings, self.myType)
-
-
-    if self.myType == "main":
-      self.CreateGUI_ComPort()
-    self.CreateGUI_List()
-    
-
-    self.master.columnconfigure(1, minsize=5)
-    self.master.columnconfigure(6000, minsize=5) #mezera na konci
-    self.master.columnconfigure(35, weight=1)
-    self.master.columnconfigure(95, weight=1)
+        self.filtr = filter.Filter(settings, self.myType)
 
 
+        if self.myType == "main":
+            self.CreateGUI_ComPort()
+        self.CreateGUI_List()
+        
 
-  def CreateGUI_List(self):
-    self.content = Frame(self.master, height=2, bd=1, relief=RAISED)
-    self.content.grid(row=200, column=0, sticky=W+E+N+S,  columnspan=1000)
-    
-    #list a scrollbar
-    self.scrollbar = Scrollbar(self.content, command=self.scrollin)
-    self.scrollbar.grid(row=200, column=900, sticky=W+E+N+S)
-    
-    self.font_courier = tkinter.font.Font ( family="Courier New", size=10)
-    self.font_courier_bold = tkinter.font.Font ( family="Courier New", size=10, weight='bold')
-    self.listView = Listbox(self.content, takefocus=True,selectmode=EXTENDED) 
-    self.listView.config(font=self.font_courier)
-    self.listView.grid(row=200, column=10, columnspan=890, sticky=W+E+N+S)
-    
-    #self.listView.bind('<Double-Button-1>', self.CopyModulName2)
-    #self.listView.bind('<Double-Button-3>', self.CopyModulName3)
-    #self.listView.bind('<Button-2>', self.CopyDebugText)
-
-    self.content.rowconfigure(190, pad=8)
-    self.content.rowconfigure(200, weight=1)
-    self.content.rowconfigure(500, minsize=2)
-    
-    self.content.columnconfigure(70, weight=1)
-    self.content.columnconfigure(90, weight=1)
-    self.content.columnconfigure(110, weight=1)
-    self.content.columnconfigure(170, weight=1)
-    self.content.columnconfigure(500, minsize=4)
+        self.master.columnconfigure(1, minsize=5)
+        self.master.columnconfigure(6000, minsize=5) #mezera na konci
+        self.master.columnconfigure(35, weight=1)
+        self.master.columnconfigure(95, weight=1)
 
 
-    self.master.rowconfigure(200, weight=1)
 
-    
-  def CreateGUI_ComPort(self):
-    print ("mainWindow.CreateGUI_ComPort(self)")
-    Label(self.master, text="Port:").grid(row=10, column=10)
-    self.editboxPort = Entry(self.master, width=3);
-    self.editboxPort.insert(0,self.ohmterm.inputer.getAddress());
-    self.editboxPort.grid(row=10, column=20)
-    ToolTip( self.editboxPort, msg="Enter some port number.", follow=True, delay=1.2)
-    
-    
-    self.buttonPortConnect = Button(self.master, text="Connect", fg="red", bg="#eebbbb", height=0, command=self.connect)
-    self.buttonPortConnect.grid(row=10, column=30, padx=5)
-    ToolTip( self.buttonPortConnect, msg="Connect to COM Port. If this is blue, app is probably connected.", follow=True, delay=1.2)
-    
-    self.checkBoxAutoconnect = Checkbutton(self.master, text="Autoconnect")
-    self.checkBoxAutoconnect.grid(row=10, column=31)
-    ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
-    self.checkConnected()
+    def CreateGUI_List(self):
+        self.content = Frame(self.master, height=2, bd=1, relief=RAISED)
+        self.content.grid(row=200, column=0, sticky=W+E+N+S,  columnspan=1000)
+        
+        #list a scrollbar
+        self.scrollbar = Scrollbar(self.content, command=self.scrollin)
+        self.scrollbar.grid(row=200, column=900, sticky=W+E+N+S)
+        
+        self.font_courier = tkinter.font.Font ( family="Courier New", size=10)
+        self.font_courier_bold = tkinter.font.Font ( family="Courier New", size=10, weight='bold')
+        self.listView = Listbox(self.content, takefocus=True,selectmode=EXTENDED) 
+        # self.listView.config()
+        defaultEditBox(self.listView)
+        self.listView.grid(row=200, column=10, columnspan=890, sticky=W+E+N+S)
+        
+        #self.listView.bind('<Double-Button-1>', self.CopyModulName2)
+        #self.listView.bind('<Double-Button-3>', self.CopyModulName3)
+        #self.listView.bind('<Button-2>', self.CopyDebugText)
+
+        self.content.rowconfigure(190, pad=8)
+        self.content.rowconfigure(200, weight=1)
+        self.content.rowconfigure(500, minsize=2)
+        
+        self.content.columnconfigure(70, weight=1)
+        self.content.columnconfigure(90, weight=1)
+        self.content.columnconfigure(110, weight=1)
+        self.content.columnconfigure(170, weight=1)
+        self.content.columnconfigure(500, minsize=4)
 
 
-  def checkConnected(self):
-    if self.ohmterm.inputer.getStatus():
-        self.buttonPortConnect.config(text="Disconect ("+self.ohmterm.inputer.getKind()+")", fg="black", bg="#55dd55")
+        self.master.rowconfigure(200, weight=1)
+
+        
+    def CreateGUI_ComPort(self):
+        print ("mainWindow.CreateGUI_ComPort(self)")
+        Label(self.master, text="Port:").grid(row=10, column=10)
+        self.editboxPort = Entry(self.master, width=3);
+        self.editboxPort.insert(0,self.ohmterm.inputer.getAddress());
+        self.editboxPort.grid(row=10, column=20)
+        ToolTip( self.editboxPort, msg="Enter some port number.", follow=True, delay=1.2)
+        
+        
+        self.buttonPortConnect = Button(self.master, text="Connect", fg="red", bg="#eebbbb", height=0, command=self.connect)
+        self.buttonPortConnect.grid(row=10, column=30, padx=5)
+        ToolTip( self.buttonPortConnect, msg="Connect to COM Port. If this is blue, app is probably connected.", follow=True, delay=1.2)
+        
+        self.checkBoxAutoconnect = Checkbutton(self.master, text="Autoconnect")
+        self.checkBoxAutoconnect.grid(row=10, column=31)
+        ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
+        self.checkConnected()
+
+
+    def checkConnected(self):
+        if self.ohmterm.inputer.getStatus():
+            self.buttonPortConnect.config(text="Disconect ("+self.ohmterm.inputer.getKind()+")", fg="black", bg="#55dd55")
+            return True
+        else:
+            self.buttonPortConnect.config(text="Connect ("+self.ohmterm.inputer.getKind()+")", fg="red", bg="#eebbbb")
+            return False
+
+    def connect(self):
+        if self.checkConnected():
+            self.ohmterm.inputer.close()
+        else:
+            self.ohmterm.inputer.open(self.editboxPort.get())
+        
+        self.checkConnected()
+
+
+
+
+
+
+    def scrollin(self, *args): #scroll handling
+        self.listView.yview(*args)
+
+
+        # class FilterReturnObject:
+        #   colorText = "black"
+        #   colorBg = "white"
+        #   bold = False
+        #   shouldShow = False
+    def insertData(self, item):
+        print ("mainWindow.insertData data = " + str(item))
+        filtered = self.filtr.testLine(item)
+        if filtered.shouldShow == True:
+                self.listView.insert(END, item[2])
+                self.listView.itemconfig(END, fg=filtered.colorText, bg=filtered.colorBg)
+        else:
+                return False
+
         return True
-    else:
-        self.buttonPortConnect.config(text="Connect ("+self.ohmterm.inputer.getKind()+")", fg="red", bg="#eebbbb")
-        return False
 
-  def connect(self):
-    if self.checkConnected():
-        self.ohmterm.inputer.close()
-    else:
-        self.ohmterm.inputer.open(self.editboxPort.get())
-    
-    self.checkConnected()
+    def kill(self):
+        self.settings[self.myType]["geometry"] = self.master.geometry()
 
-
-
-
-
-
-  def scrollin(self, *args): #scroll handling
-    self.listView.yview(*args)
-
-
-    # class FilterReturnObject:
-    #   colorText = "black"
-    #   colorBg = "white"
-    #   bold = False
-    #   shouldShow = False
-  def insertData(self, item):
-    print ("mainWindow.insertData data = " + str(item))
-    filtered = self.filtr.testLine(item)
-    if filtered.shouldShow == True:
-        self.listView.insert(END, item[2])
-        self.listView.itemconfig(END, fg=filtered.colorText, bg=filtered.colorBg)
-    else:
-        return False
-
-    return True
-
-  def kill(self):
-    self.settings[self.myType]["geometry"] = self.master.geometry()
-
-    self.master.destroy()
+        self.master.destroy()
 
