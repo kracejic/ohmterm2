@@ -10,6 +10,7 @@ from toolTip import *
 
 
 import tkinter.font
+import filter
 
 
 
@@ -25,6 +26,9 @@ class mainWindow(object):
     self.settings = settings;
     self.myType = myType
     self.ohmterm = ohmterm
+    print ("mainWindow.__init__(myType="+myType+")")
+
+    self.filtr = filter.Filter(settings, self.myType)
 
 
     if self.myType == "main":
@@ -49,13 +53,13 @@ class mainWindow(object):
     
     self.font_courier = tkinter.font.Font ( family="Courier New", size=10)
     self.font_courier_bold = tkinter.font.Font ( family="Courier New", size=10, weight='bold')
-    self.seznam = Listbox(self.content, takefocus=True,selectmode=EXTENDED) 
-    self.seznam.config(font=self.font_courier)
-    self.seznam.grid(row=200, column=10, columnspan=890, sticky=W+E+N+S)
+    self.listView = Listbox(self.content, takefocus=True,selectmode=EXTENDED) 
+    self.listView.config(font=self.font_courier)
+    self.listView.grid(row=200, column=10, columnspan=890, sticky=W+E+N+S)
     
-    #self.seznam.bind('<Double-Button-1>', self.CopyModulName2)
-    #self.seznam.bind('<Double-Button-3>', self.CopyModulName3)
-    #self.seznam.bind('<Button-2>', self.CopyDebugText)
+    #self.listView.bind('<Double-Button-1>', self.CopyModulName2)
+    #self.listView.bind('<Double-Button-3>', self.CopyModulName3)
+    #self.listView.bind('<Button-2>', self.CopyDebugText)
 
     self.content.rowconfigure(190, pad=8)
     self.content.rowconfigure(200, weight=1)
@@ -112,10 +116,24 @@ class mainWindow(object):
 
 
   def scrollin(self, *args): #scroll handling
-    self.seznam.yview(*args)
+    self.listView.yview(*args)
 
-  def addLines(self, lines):
-    pass
+
+    # class FilterReturnObject:
+    #   colorText = "black"
+    #   colorBg = "white"
+    #   bold = False
+    #   shouldShow = False
+  def insertData(self, item):
+    print ("mainWindow.insertData data = " + str(item))
+    filtered = self.filtr.testLine(item)
+    if filtered.shouldShow == True:
+        self.listView.insert(END, item[2])
+        self.listView.itemconfig(END, fg=filtered.colorText, bg=filtered.colorBg)
+    else:
+        return False
+
+    return True
 
   def kill(self):
     self.settings[self.myType]["geometry"] = self.master.geometry()

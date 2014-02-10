@@ -26,7 +26,7 @@ class InputTester(genericinput.Input):
     #if not connected, go away
     if self.connected == False:
       return []
-    data = []
+    data = ["23:06:34.528 INFO MAIN : Log text",]
 
     #TODO make data
 

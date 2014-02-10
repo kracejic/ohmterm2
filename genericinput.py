@@ -8,6 +8,7 @@ class Input(object):
 
   def __init__(self, settings):
     super(Input, self).__init__()
+    print("Input init, kind=" + self.kind)
     self.settings = settings
 
 

@@ -17,21 +17,17 @@ class Filter(object):
   filtr = []
   ignore = []
 
-
   enableTime = False
   timeLow = 0
   timeHigh = 0
   timeLowStr = strptime("01.01.1950 01:01:01", "%d.%m.%Y %H:%M:%S")
   timeHighStr = strptime("01.01.2150 01:01:01", "%d.%m.%Y %H:%M:%S")
 
-
   enableErrors = True
   enableWarnings = True
 
-
   colorFilter = [[],[],[],[]]
   colorFilterColors = ['blue','green','gray','brown']
-  
 
   errorColor = "black"
   errorColorBg = "red"
@@ -41,17 +37,55 @@ class Filter(object):
   defaultColorBg = "white"
 
 
-  def __init__(self, arg):
+  def __init__(self, settings, windowType):
     super(Filter, self).__init__()
-    self.arg = arg
+    print ("Filter.__init__()")
+    self.settings = settings
+    self.windowType = windowType
+
+    loadLast = self.settings.getboolean(self.windowType, 'loadLastFilterSettings', fallback=False)
+    if loadLast:
+      self.loadSettings("FilterLastFrom"+self.windowType)
+    else:
+      self.loadSettings("FilterSavedSettingsDefault")
+
+
+  def loadSettings(self, settingsName):
+    if (settingsName in self.settings) == False:
+      settingsName = "FilterSavedSettingsDefault"
+
+    enableFilter = self.settings.getboolean(settingsName,"enableFilter" , fallback=False)
+    enableIgnore = self.settings.getboolean(settingsName,"enableIgnore" , fallback=False)
+    filtr = self.getFiltersFromLine(self.settings.get(settingsName,"filtr" , fallback=""))
+    ignore = self.getFiltersFromLine(self.settings.get(settingsName,"ignore" , fallback=""))
+
+    enableTime = self.settings.getboolean(settingsName,"enableTime" , fallback=False)
+    timeLow = self.settings.get(settingsName,"timeLow" , fallback=0)
+    timeHigh = self.settings.get(settingsName,"timeHigh" , fallback=0)
+
+    enableErrors = self.settings.getboolean(settingsName,"enableErrors" , fallback=True)
+    enableWarnings = self.settings.getboolean(settingsName,"enableWarnings" , fallback=True)
+
+    colorFilter = [
+      self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter0", fallback="")),
+      self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter1", fallback="")),
+      self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter2", fallback="")),
+      self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter3", fallback=""))]
+    colorFilterColors = [
+      self.settings.get(settingsName, "colorColor0", fallback="blue"),
+      self.settings.get(settingsName, "colorColor1", fallback="green"),
+      self.settings.get(settingsName, "colorColor2", fallback="gray"),
+      self.settings.get(settingsName, "colorColor3", fallback="brown")]
+    pass
     
 
-  def testLine(self, line):
+  def testLine(self, inputItem):
     ret = FilterReturnObject()
 
 
+    line = inputItem[2]
     if self.enableTime:
-      #TODO
+      #TODO time
       #if false, then return
       pass
     else:
@@ -69,7 +103,7 @@ class Filter(object):
         ret.shouldShow = True
 
       #coloring + force display ERRORS/WARNS
-      if re.search('ERROR:', line):
+      if inputItem[3] == 'e':
         ret.ColorText = '#FF0000'
         ret.colorBg = "#FFbbbb"
         ret.bold = True
@@ -77,7 +111,7 @@ class Filter(object):
           ret.shouldShow = True
           return ret
       else:
-        if re.search('WARN:', line):
+        if inputItem[3] == 'w':
           ret.ColorText = '#dd8800'
           ret.colorBg = "#FFbbbb"
           ret.bold = True

@@ -10,17 +10,24 @@ import inputUDP
 class InputStrategy(object):
   """docstring for InputStrategy"""
   connected = False;
+  defaultInput = 'test'
   def __init__(self, settings):
     super(InputStrategy, self).__init__()
+    print ("InputStrategy.__init__()")
     self.settings = settings
     self.inputer = genericinput.Input(settings)
 
 
-    self.switchInput( self.settings.get('input', 'defaultMethod', fallback='test') )
+    self.switchInput( self.settings.get('input', 'defaultMethod', fallback=self.defaultInput) )
     if self.settings.getboolean('input', 'autoconnect', fallback=False):
       self.open(self.getAddress())
 
+  def getInputs(self):
+    return ["test","udp","com"]
+
+    
   def switchInput(self, onWhat):
+    print ("InputStrategy.switchInput("+onWhat+")")
     self.inputer.close()
 
     if onWhat == "test":

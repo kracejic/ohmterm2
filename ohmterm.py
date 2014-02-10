@@ -11,9 +11,9 @@ except:
 import configparser
 
 import inputStrategy
-import filter
+import decomposer
 import mainWindow
-
+import traceback
 
 
 
@@ -42,25 +42,39 @@ class OhmTerm(object):
     self.settings.read(self.settingsFileName)
     self.recreateSettings()
 
-
     #creating input
     self.inputer = inputStrategy.InputStrategy(self.settings)
 
+    #creating decomposer
+    self.decomposer = decomposer.Decomposer(self.settings)
 
-
-
+    #creating window
     self.root = Tk()
     self.root.protocol("WM_DELETE_WINDOW", self.killProgram)
-    # self.root.geometry("1150x900")
     self.root.geometry(self.settings.get('main', 'geometry', fallback='1150x900') )
-
-
-    #creating mainwindow
     self.mainwindow = mainWindow.mainWindow(self.root, "main", self.datastore, self.settings, self)
 
 
-
+    self.root.after(1000, self.inputTask)
     self.root.mainloop()
+    pass
+
+  def inputTask(self):
+    print ("OhmTerm.inputTask()")
+    try:
+      rawData = self.inputer.getData()
+      decomposedData = self.decomposer.decompose(rawData)
+      self.datastore = self.datastore + decomposedData
+
+      #input data to window
+      for item in decomposedData:
+        self.mainwindow.insertData(item)
+    except Exception as ex:
+      print("ERROR")
+      traceback.print_exc()
+
+
+    self.root.after(1000, self.inputTask)
     pass
 
 
@@ -88,6 +102,7 @@ class OhmTerm(object):
     self.createSettingsIfNotExisted("none")
     self.createSettingsIfNotExisted("udp")
     self.createSettingsIfNotExisted("com")
+    self.createSettingsIfNotExisted("FilterSavedSettingsDefault")
 
 
 ohmTermApp = OhmTerm()
