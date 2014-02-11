@@ -86,9 +86,14 @@ class ToolTip( Toplevel ):
             self.visible = 1
 
         root = self.parent
+        root = self.parent
+
+        # parent_name = self.winfo_parent()
+        # root = self._nametowidget(parent_name)
+
            
-        pa = re.split(r'(\D)', root.geometry())
-        pt = re.split(r'(\D)', self.geometry())
+        # pa = re.split(r'(\D)', root.geometry())
+        # pt = re.split(r'(\D)', self.geometry())
         #pm = re.split(r'(\D)', self.master.geometry())
         #print "root:  ", pa
         #print "tool:  ", self.geometry()
@@ -108,19 +113,20 @@ class ToolTip( Toplevel ):
         #else:
         #limit_x = int(pa[0]) + int(pa[4]) 
         #if root.state() == 'zoomed':
-        limit_x = int(pa[0])
+        # limit_x = int(pa[0])
         #print "lim: ", limit_x
           
+        self.geometry( '+%i+%i' % ( event.x_root+10, event.y_root+10 ) )        # Offset the ToolTip 10x10 pixes southwest of the pointer
           
-        if xCan > (limit_x-int(pt[0])):
-          #print "xxx"
-          self.geometry( '+%i+%i' % ( event.x_root-int(pt[0]), event.y_root+10 ) )        # Offset the ToolTip 10x10 pixes southwest of the pointer
-        else:
-          self.geometry( '+%i+%i' % ( event.x_root+10, event.y_root+10 ) )        # Offset the ToolTip 10x10 pixes southwest of the pointer
-        try:
-            self.msgVar.set( self.msgFunc() )                                   # Try to call the message function.  Will not change the message if the message function is None or the message function fails
-        except:
-            pass
+        # if xCan > (limit_x-int(pt[0])):
+        #   #print "xxx"
+        #   self.geometry( '+%i+%i' % ( event.x_root-int(pt[0]), event.y_root+10 ) )        # Offset the ToolTip 10x10 pixes southwest of the pointer
+        # else:
+        #   self.geometry( '+%i+%i' % ( event.x_root+10, event.y_root+10 ) )        # Offset the ToolTip 10x10 pixes southwest of the pointer
+        # try:
+        #     self.msgVar.set( self.msgFunc() )                                   # Try to call the message function.  Will not change the message if the message function is None or the message function fails
+        # except:
+        #     pass
         self.after( int( self.delay * 1000 ), self.show )
         
         

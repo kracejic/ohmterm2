@@ -17,10 +17,6 @@ import traceback
 
 
 
-version1 = 2
-version2 = 0
-version3 = 0
-betaFlag = True
 
 
 
@@ -30,6 +26,11 @@ betaFlag = True
 
 class OhmTerm(object):
     """docstring for OhmTerm"""
+    version1 = 2
+    version2 = 0
+    version3 = 0
+    betaFlag = True
+
     datastore = []
     settingsFileName = "config.ini"
 
@@ -41,6 +42,11 @@ class OhmTerm(object):
         self.settings = configparser.ConfigParser()
         self.settings.read(self.settingsFileName)
         self.recreateSettings()
+        self.strVersion = str(self.version1) + '.' + str(self.version2) + '.' + str(self.version3)
+        if self.betaFlag:
+            self.strVersion = self.strVersion + "Beta"
+        self.settings["main"]["version"] = self.strVersion
+
 
         #creating input
         self.inputer = inputStrategy.InputStrategy(self.settings)
@@ -53,6 +59,8 @@ class OhmTerm(object):
         self.root.protocol("WM_DELETE_WINDOW", self.killProgram)
         self.root.geometry(self.settings.get('main', 'geometry', fallback='1150x900') )
         self.mainwindow = mainWindow.mainWindow(self.root, "main", self.datastore, self.settings, self)
+        img = PhotoImage(file='data/ohmterm.gif')
+        self.root.tk.call('wm', 'iconphoto', self.root._w, img)
 
 
         self.root.after(1000, self.inputTask)
@@ -77,7 +85,7 @@ class OhmTerm(object):
         self.root.after(1000, self.inputTask)
         pass
 
-
+        
         
     def killProgram(self):
         print ("OhmTerm.killProgram()")
@@ -102,7 +110,7 @@ class OhmTerm(object):
         self.createSettingsIfNotExisted("none")
         self.createSettingsIfNotExisted("udp")
         self.createSettingsIfNotExisted("com")
-        self.createSettingsIfNotExisted("FilterSavedSettingsDefault")
+        self.createSettingsIfNotExisted("FilterDefault")
 
 
 ohmTermApp = OhmTerm()

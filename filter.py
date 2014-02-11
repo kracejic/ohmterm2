@@ -43,16 +43,18 @@ class Filter(object):
         self.settings = settings
         self.windowType = windowType
 
-        loadLast = self.settings.getboolean(self.windowType, 'loadLastFilterSettings', fallback=False)
-        if loadLast:
-            self.loadSettings("FilterLastFrom"+self.windowType)
-        else:
-            self.loadSettings("FilterSavedSettingsDefault")
+        # loadLast = self.settings.getboolean(self.windowType, 'loadLastFilterSettings', fallback=False)
+        # if loadLast:
+        #     self.loadSettings("FilterCurrent"+self.windowType)
+        # else:
+        #     self.loadSettings("FilterDefault")
+        # self.loadSettings()
 
 
-    def loadSettings(self, settingsName):
+    def loadSettings(self):
+        settingsName = "FilterCurrent"+self.windowType
         if (settingsName in self.settings) == False:
-            settingsName = "FilterSavedSettingsDefault"
+            settingsName = "FilterDefault"
 
         enableFilter = self.settings.getboolean(settingsName,"enableFilter" , fallback=False)
         enableIgnore = self.settings.getboolean(settingsName,"enableIgnore" , fallback=False)
