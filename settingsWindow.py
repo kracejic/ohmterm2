@@ -6,6 +6,7 @@ except:
     except:
         print ("Tkinter lib is missing.")
         sys.exit()
+from defaultSkin import *
 
 
 
@@ -17,6 +18,7 @@ class SettingsWindow(Toplevel):
         self.settings = settings
         self.title("Ohmterm2 - Settings")
         self.geometry(self.settings.get('main', 'settingsGeometry', fallback='480x320') )
+        defaultFrameClean(self)
 
 
         self.protocol("WM_DELETE_WINDOW", self.killWindow)

@@ -12,23 +12,8 @@ from toolTip import *
 import tkinter.font
 import filter
 import settingsWindow
+from defaultSkin import *
 
-
-
-def defaultEditBox(widg):
-    widg.config(bg="#FFFFFF",relief=FLAT,width=10)
-def defaultLabel(widg):
-    widg.config(bg="#EEE")
-def defaultButton(widg):
-    widg.config(bg="#EEE", relief=RAISED,bd=1)
-    widg.grid(ipadx=5, padx=1, pady=2)
-def defaultFrameClean(widg):
-    # widg.config(bg="#EEE",relief=SUNKEN)
-    widg.config(bg="#EEE",relief=FLAT)
-def defaultCheckBox(widg):
-    widg.config(bg="#EEE",relief=FLAT,highlightbackground="#EEE")
-def defaultListBox(widg):
-    widg.config(bg="#FFFFFF")
 
 
 class mainWindow(object):
@@ -99,13 +84,18 @@ class mainWindow(object):
 
         self.iconClean = PhotoImage(file="data/clean.gif")
         self.buttonClear = Button(self.frameActionRow, text="clear", image=self.iconClean, command=self.clear)
-        self.buttonClear.grid(row=10, column=80)
+        self.buttonClear.grid(row=10, column=45)
         defaultButton(self.buttonClear)
 
         self.iconDelete = PhotoImage(file="data/delete.gif")
         self.buttonDelete = Button(self.frameActionRow, text="clear", image=self.iconDelete, command=self.clear)
-        self.buttonDelete.grid(row=10, column=90)
+        self.buttonDelete.grid(row=10, column=46)
         defaultButton(self.buttonDelete)
+
+        self.iconSave = PhotoImage(file="data/save.gif")
+        self.buttonSave = Button(self.frameActionRow, text="clear", image=self.iconSave, command=self.clear)
+        self.buttonSave.grid(row=10, column=85)
+        defaultButton(self.buttonSave)
 
 
 

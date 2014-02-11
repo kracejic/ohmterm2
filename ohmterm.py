@@ -46,6 +46,10 @@ class OhmTerm(object):
         if self.betaFlag:
             self.strVersion = self.strVersion + "Beta"
         self.settings["main"]["version"] = self.strVersion
+        self.settings["main"]["v1"] = str(self.version1)
+        self.settings["main"]["v2"] = str(self.version2)
+        self.settings["main"]["v3"] = str(self.version3)
+        self.settings["main"]["vBeta"] = str(self.betaFlag)
 
 
         #creating input
