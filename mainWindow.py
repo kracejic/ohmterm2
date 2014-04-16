@@ -176,7 +176,7 @@ class mainWindow(object):
 
 
     def showSettings(self):
-        self.settingsWindow = settingsWindow.SettingsWindow(self.settings)
+        self.settingsWindow = settingsWindow.SettingsWindow(self.settings, self.ohmterm)
 
     def clear(self):
         self.listView.delete(0, END)

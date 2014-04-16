@@ -12,16 +12,20 @@ class InputUDP(genericinput.Input):
 
     def open(self, address):
         self.settings[self.kind]['address'] = address
+        print("ERROR: InputUDP - NOT IMPLEMENTED")
         return False
 
     def close(self):
+        print("ERROR: InputUDP - NOT IMPLEMENTED")
         self.connected = False
         pass
 
     def getStatus(self):
+        print("ERROR: InputUDP - NOT IMPLEMENTED")
         return False
         
     def getData(self):
+        print("ERROR: InputUDP - NOT IMPLEMENTED")
         #if not connected, go away
         if self.connected == False:
             return []

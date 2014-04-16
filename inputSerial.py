@@ -32,20 +32,27 @@ class InputSerial(genericinput.Input):
             adr = int(address)
         except:
             print ("ERROR InputSerial.open(address): Address not INT: '" + address +"'")
+            return False
 
         try:
             self.ser = serial.Serial(int(address), 115200, timeout=0.02, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)  # open first serial port
         except:
+            print ("ERROR InputSerial.open(address) - cannot open adress: '" + address +"'")
             return False
         # check which port was really used
-        print ("Trying to connect to: ", port, ". Portstr: ", self.ser.portstr)       
+        print ("InputSerial.open() - connected to: ", address, ". Portstr: ", self.ser.portstr)       
         self.settings[self.kind]['address'] = address
         self.connected = True
         return True
     
 
     def close(self):
-        self.ser.close()
+        try:
+            self.ser.close()
+            print ("InputSerial.close() - closed conenction")
+        except:
+            print ("ERROR: InputSerial - cannot close")
+            
         self.connected = 0  
 
     def getStatus(self):
@@ -80,8 +87,9 @@ class InputSerial(genericinput.Input):
 
             except:
                 print ("------------------------------------------------------------")
-                print ("ERROR: Comport reading error :(")
-                traceback.print_exc(file=sys.stdout)      
+                print ("ERROR: InputSerial - reading error :(")
+                traceback.print_exc(file=sys.stdout)
+                self.close()
 
         self.toomuchdata = 1
         return output    

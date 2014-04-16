@@ -34,6 +34,8 @@ class OhmTerm(object):
     datastore = []
     settingsFileName = "config.ini"
 
+    mainwindow = None
+
 
     def __init__(self):
         print ("OhmTerm.__init__(self)")
@@ -115,6 +117,7 @@ class OhmTerm(object):
         self.createSettingsIfNotExisted("udp")
         self.createSettingsIfNotExisted("com")
         self.createSettingsIfNotExisted("FilterDefault")
+        self.createSettingsIfNotExisted("FilterCurrentmain")
 
 
 ohmTermApp = OhmTerm()

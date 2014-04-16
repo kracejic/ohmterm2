@@ -80,7 +80,10 @@ class Filter(object):
             self.settings.get(settingsName, "colorColor3", fallback="brown")]
         pass
         
-
+    # inputItem[0] - time
+    # inputItem[1] - component
+    # inputItem[2] - string
+    # inputItem[3] - type
     def testLine(self, inputItem):
         ret = FilterReturnObject()
 

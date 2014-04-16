@@ -18,7 +18,11 @@ def defaultButton(widg):
 def defaultFrameClean(widg):
     # widg.config(bg="#EEE",relief=SUNKEN)
     widg.config(bg="#EEE",relief=FLAT)
+def defaultFrameDirty(widg):
+    widg.config(bg="#EEE",relief=RIDGE, padx=10, pady=10)
 def defaultCheckBox(widg):
     widg.config(bg="#EEE",relief=FLAT,highlightbackground="#EEE")
 def defaultListBox(widg):
     widg.config(bg="#FFFFFF")
+def defaultOptionMenu(widg):
+    widg.config(bg="#EEE",relief=RAISED,highlightbackground="#EEE")

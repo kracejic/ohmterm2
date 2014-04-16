@@ -11,6 +11,7 @@ class InputStrategy(object):
     """docstring for InputStrategy"""
     connected = False;
     defaultInput = 'test'
+    selectedStrategy = 'none'
     def __init__(self, settings):
         super(InputStrategy, self).__init__()
         print ("InputStrategy.__init__()")
@@ -18,16 +19,19 @@ class InputStrategy(object):
         self.inputer = genericinput.Input(settings)
 
 
-        self.switchInput( self.settings.get('input', 'defaultMethod', fallback=self.defaultInput) )
+        self.setStrategy( self.settings.get('input', 'defaultInput', fallback=self.defaultInput) )
         if self.settings.getboolean('input', 'autoconnect', fallback=False):
             self.open(self.getAddress())
 
-    def getInputs(self):
+    def getAvailableStrategies(self):
         return ["test","udp","com"]
 
+    def getStrategy(self):
+        return self.selectedStrategy
+
         
-    def switchInput(self, onWhat):
-        print ("InputStrategy.switchInput("+onWhat+")")
+    def setStrategy(self, onWhat):
+        print ("InputStrategy.setStrategy("+onWhat+")")
         self.inputer.close()
 
         if onWhat == "test":
@@ -38,6 +42,16 @@ class InputStrategy(object):
             self.inputer = inputUDP.InputUDP(self.settings);
         elif onWhat == "com":
             self.inputer = inputSerial.InputSerial(self.settings);
+        else:
+            print ("InputStrategy.setStrategy ERROR: not found ('"+strategy+"')")
+            self.setStrategy(self.defaultStrategy)
+            return False
+
+        self.selectedStrategy = onWhat
+        self.settings['input']['defaultInput'] = onWhat
+        return True
+
+
 
     def getAddress(self):
         return self.inputer.getAddress();
