@@ -29,9 +29,7 @@ class mainWindow(object):
         self.master.title("Ohmterm "+self.settings["main"]["version"])
         defaultFrameClean( self.master)
 
-
         self.filtr = filter.Filter(settings, self.myType)
-
 
         #First Row
         self.frameFirstRow = Frame(height=32, bd=1)
@@ -53,13 +51,11 @@ class mainWindow(object):
 
         self.CreateGuiBasic()
         self.CreateGuiActionsBar()
-        
 
         self.master.columnconfigure(1, minsize=5)
         self.master.columnconfigure(6000, minsize=5) #mezera na konci
         self.master.columnconfigure(35, weight=1)
         self.master.columnconfigure(95, weight=1)
-
 
         #refresh settings
         self.filtr.loadSettings()
@@ -73,14 +69,14 @@ class mainWindow(object):
 
     def CreateGuiActionsBar(self):
         self.iconRefresh = PhotoImage(file="data/refresh.gif")
-        self.buttonRefresh = Button(self.frameActionRow, text="clear", image=self.iconRefresh, command=self.clear)
-        self.buttonRefresh.grid(row=10, column=10)
-        defaultButton(self.buttonRefresh)
+        self.buttonRefreshAll = Button(self.frameActionRow, text="clear", image=self.iconRefresh, command=self.refreshQuick)
+        self.buttonRefreshAll.grid(row=10, column=10)
+        defaultButton(self.buttonRefreshAll)
 
         self.iconRefreshB = PhotoImage(file="data/refreshB.gif")
-        self.buttonRefresh = Button(self.frameActionRow, text="clear", image=self.iconRefreshB, command=self.clear)
-        self.buttonRefresh.grid(row=10, column=20)
-        defaultButton(self.buttonRefresh)
+        self.buttonRefreshAll = Button(self.frameActionRow, text="clear", image=self.iconRefreshB, command=self.refreshAll)
+        self.buttonRefreshAll.grid(row=10, column=20)
+        defaultButton(self.buttonRefreshAll)
 
         self.iconClean = PhotoImage(file="data/clean.gif")
         self.buttonClear = Button(self.frameActionRow, text="clear", image=self.iconClean, command=self.clear)
@@ -88,9 +84,10 @@ class mainWindow(object):
         defaultButton(self.buttonClear)
 
         self.iconDelete = PhotoImage(file="data/delete.gif")
-        self.buttonDelete = Button(self.frameActionRow, text="clear", image=self.iconDelete, command=self.clear)
-        self.buttonDelete.grid(row=10, column=46)
+        self.buttonDelete = Button(self.frameActionRow, text="clear", image=self.iconDelete, command=self.deleteDatastore)
         defaultButton(self.buttonDelete)
+        self.buttonDelete.config(bg="#FF8888")
+        self.buttonDelete.grid(row=10, column=46)
 
         self.iconSave = PhotoImage(file="data/save.gif")
         self.buttonSave = Button(self.frameActionRow, text="clear", image=self.iconSave, command=self.clear)
@@ -127,7 +124,6 @@ class mainWindow(object):
         self.content.columnconfigure(110, weight=1)
         self.content.columnconfigure(170, weight=1)
         self.content.columnconfigure(500, minsize=4)
-
 
         self.master.rowconfigure(200, weight=1)
 
@@ -171,43 +167,54 @@ class mainWindow(object):
             self.ohmterm.inputer.close()
         else:
             self.ohmterm.inputer.open(self.editboxPort.get())
-        
         self.checkConnected()
 
 
     def showSettings(self):
         self.settingsWindow = settingsWindow.SettingsWindow(self.settings, self.ohmterm)
 
+
     def clear(self):
         self.listView.delete(0, END)
-    def refresh(self):
-        # self.ohmterm.refresh()
+
+
+    def deleteDatastore(self):
+        self.clear()
+        self.ohmterm.deleteDatastore()
+
+
+    def refreshAll(self):
+        self.clear()
+        self.ohmterm.refreshAll(self)
         pass
 
+
+    def refreshQuick(self):
+        self.clear()
+        self.ohmterm.refreshQuick(self)
+        pass
 
 
     def scrollin(self, *args): #scroll handling
         self.listView.yview(*args)
 
 
-        # class FilterReturnObject:
-        #   colorText = "black"
-        #   colorBg = "white"
-        #   bold = False
-        #   shouldShow = False
+    # class FilterReturnObject:
+    #   colorText = "black"
+    #   colorBg = "white"
+    #   bold = False
+    #   shouldShow = False
     def insertData(self, item):
         print ("mainWindow.insertData data = " + str(item))
         filtered = self.filtr.testLine(item)
         if filtered.shouldShow == True:
-                self.listView.insert(END, item[2])
-                self.listView.itemconfig(END, fg=filtered.colorText, bg=filtered.colorBg)
+            self.listView.insert(END, item[2])
+            self.listView.itemconfig(END, fg=filtered.colorText, bg=filtered.colorBg)
         else:
-                return False
-
+            return False
         return True
 
     def kill(self):
         self.settings[self.myType]["geometry"] = self.master.geometry()
-
         self.master.destroy()
 

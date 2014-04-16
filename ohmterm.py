@@ -73,6 +73,7 @@ class OhmTerm(object):
         self.root.mainloop()
         pass
 
+
     def inputTask(self):
         print ("OhmTerm.inputTask()")
         try:
@@ -80,9 +81,8 @@ class OhmTerm(object):
             decomposedData = self.decomposer.decompose(rawData)
             self.datastore = self.datastore + decomposedData
 
-            #input data to window
-            for item in decomposedData:
-                self.mainwindow.insertData(item)
+            self.pushDataToWindow(decomposedData, self.mainwindow)
+
         except Exception as ex:
             print("ERROR")
             traceback.print_exc()
@@ -91,12 +91,41 @@ class OhmTerm(object):
         self.root.after(1000, self.inputTask)
         pass
 
+    def pushDataToWindow(self, data, window):
+        for item in data:
+            window.insertData(item)
+
+
+    def deleteDatastore(self):
+        print ("OhmTerm.deleteDatastore")
+        self.datastore[:] = []
         
+
+
+    def refreshAll(self, window):
+        print ("OhmTerm.refreshAll - " + window.myType)
+        self.pushDataToWindow(self.datastore, window)
+
+
+    def refreshQuick(self, window):
+        print ("OhmTerm.refreshQuick - " + window.myType)
+        count = 0
+        countShowed = 0
+        for item in reversed(self.datastore):
+            if window.insertData(item):
+                countShowed = countShowed + 1
+            count = count + 1
+            if count > 10000:
+              break
+            if countShowed > 500:
+              break
+
         
     def killProgram(self):
         print ("OhmTerm.killProgram()")
         self.mainwindow.kill()
         self.writeConfig()
+
 
     def writeConfig(self):
         fil = open(self.settingsFileName, 'w')
@@ -108,6 +137,7 @@ class OhmTerm(object):
         if (paragraph in self.settings) == False:
             print("Creating settings: " + paragraph)
             self.settings[paragraph] = {}
+
 
     def recreateSettings(self):
         self.createSettingsIfNotExisted("main")
