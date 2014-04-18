@@ -112,7 +112,7 @@ class OhmTerm(object):
         count = 0
         countShowed = 0
         for item in reversed(self.datastore):
-            if window.insertData(item):
+            if window.insertDataAtTheStart(item):
                 countShowed = countShowed + 1
             count = count + 1
             if count > 10000:

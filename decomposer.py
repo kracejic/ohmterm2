@@ -47,7 +47,9 @@ class Decomposer(object):
 
 
 
-
+import datetime
+import calendar
+import time
 
 #strategies for decomposing
 def decomposeStrategyNone(text):
@@ -63,4 +65,14 @@ def decomposeStrategyOhmStandard1(text):
         kind = "e"
     elif splited[1][0] == "W":
         kind = "w"
-    return [0, splited[2], text, kind]
+
+    timstamp = 0
+    try:
+        t = datetime.datetime.strptime("2014 "+splited[0]+"000","%Y %H:%M:%S.%f")
+        # print (t.time().strftime("%H:%M:%S.%f"))
+        timstamp = calendar.timegm(t.utctimetuple()) + t.microsecond  / 1000000.0
+    except:
+        print ("decomposeStrategyOhmStandard1() ERROR: time convert failed")
+        pass
+
+    return [timstamp, splited[2], text, kind]

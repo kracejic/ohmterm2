@@ -215,6 +215,16 @@ class mainWindow(object):
             return False
         return True
 
+    def insertDataAtTheStart(self, item):
+        print ("mainWindow.insertData data = " + str(item))
+        filtered = self.filtr.testLine(item)
+        if filtered.shouldShow == True:
+            self.listView.insert(0, item[2])
+            self.listView.itemconfig(0, fg=filtered.colorText, bg=filtered.colorBg)
+        else:
+            return False
+        return True
+
     def kill(self):
         self.settings[self.myType]["geometry"] = self.master.geometry()
         self.master.destroy()
