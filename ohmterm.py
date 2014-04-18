@@ -75,7 +75,7 @@ class OhmTerm(object):
 
 
     def inputTask(self):
-        print ("OhmTerm.inputTask()")
+        # print ("OhmTerm.inputTask()")
         try:
             rawData = self.inputer.getData()
             decomposedData = self.decomposer.decompose(rawData)

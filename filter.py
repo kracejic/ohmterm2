@@ -48,7 +48,7 @@ class Filter(object):
         #     self.loadSettings("FilterCurrent"+self.windowType)
         # else:
         #     self.loadSettings("FilterDefault")
-        # self.loadSettings()
+        self.loadSettings()
 
 
     def loadSettings(self):
@@ -56,24 +56,35 @@ class Filter(object):
         if (settingsName in self.settings) == False:
             settingsName = "FilterDefault"
 
-        enableFilter = self.settings.getboolean(settingsName,"enableFilter" , fallback=False)
-        enableIgnore = self.settings.getboolean(settingsName,"enableIgnore" , fallback=False)
-        filtr = self.getFiltersFromLine(self.settings.get(settingsName,"filtr" , fallback=""))
-        ignore = self.getFiltersFromLine(self.settings.get(settingsName,"ignore" , fallback=""))
+        self.enableFilter = self.settings.getboolean(settingsName,"enablefilter" , fallback=False)
+        # if self.enableFilter == '0':
+        #     self.enableFilter = False
+        # else:
+        #     self.enableFilter = True
 
-        enableTime = self.settings.getboolean(settingsName,"enableTime" , fallback=False)
-        timeLow = self.settings.get(settingsName,"timeLow" , fallback=0)
-        timeHigh = self.settings.get(settingsName,"timeHigh" , fallback=0)
+        self.enableIgnore = self.settings.getboolean(settingsName,"enableignore" , fallback=False)
+        # if self.enableIgnore == '0':
+        #     self.enableIgnore = False
+        # else:
+        #     self.enableIgnore = True
+        self.filtrLine = self.settings.get(settingsName,"filtr" , fallback="")
+        self.filtr = self.getFiltersFromLine(self.settings.get(settingsName,"filtr" , fallback=""))
+        self.ignoreLine = self.settings.get(settingsName,"ignore" , fallback="")
+        self.ignore = self.getFiltersFromLine(self.settings.get(settingsName,"ignore" , fallback=""))
 
-        enableErrors = self.settings.getboolean(settingsName,"enableErrors" , fallback=True)
-        enableWarnings = self.settings.getboolean(settingsName,"enableWarnings" , fallback=True)
+        self.enableTime = self.settings.getboolean(settingsName,"enableTime" , fallback=False)
+        self.timeLow = self.settings.get(settingsName,"timeLow" , fallback=0)
+        self.timeHigh = self.settings.get(settingsName,"timeHigh" , fallback=0)
 
-        colorFilter = [
+        self.enableErrors = self.settings.getboolean(settingsName,"enableErrors" , fallback=True)
+        self.enableWarnings = self.settings.getboolean(settingsName,"enableWarnings" , fallback=True)
+
+        self.colorFilter = [
             self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter0", fallback="")),
             self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter1", fallback="")),
             self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter2", fallback="")),
             self.getFiltersFromLine(self.settings.get(settingsName, "colorFilter3", fallback=""))]
-        colorFilterColors = [
+        self.colorFilterColors = [
             self.settings.get(settingsName, "colorColor0", fallback="blue"),
             self.settings.get(settingsName, "colorColor1", fallback="green"),
             self.settings.get(settingsName, "colorColor2", fallback="gray"),
@@ -86,9 +97,12 @@ class Filter(object):
     # inputItem[3] - type
     def testLine(self, inputItem):
         ret = FilterReturnObject()
+        print (str(self.enableFilter) + " - FILTRY = " + str(self.filtr))
+        print (str(self.enableIgnore) + " - IGNORE = " + str(self.ignore))
 
 
         line = inputItem[2]
+        print ("LINE: " + inputItem[2])
         if self.enableTime:
             #TODO time
             #if false, then return
@@ -96,7 +110,8 @@ class Filter(object):
         else:
             if self.enableFilter:
                 for oneRegexp in self.filtr:
-                    if re.search(oneRegexp, line):
+                    if re.search(oneRegexp, line, re.IGNORECASE):
+                        print ("Found")
                         ret.shouldShow = True
                         break
                 
@@ -131,14 +146,14 @@ class Filter(object):
             #check ignore
             if self.enableIgnore:
                 for oneRegexp in self.ignore:
-                    if re.search(oneRegexp, line):
+                    if re.search(oneRegexp, line, re.IGNORECASE):
                         ret.shouldShow = False
                         return ret
 
 
             for i in range(4):
                 for oneRegexp in self.colorFilter[i]:
-                    if re.search(oneRegexp, line):
+                    if re.search(oneRegexp, line, re.IGNORECASE):
                         ret.colorText = colorFilterColors[i]
                         return ret
 

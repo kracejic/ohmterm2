@@ -41,7 +41,7 @@ class mainWindow(object):
         #Action Row
         self.frameActionRow = Frame(height=32, bd=1)
         defaultFrameClean(self.frameActionRow)
-        self.frameActionRow.grid(row=30, column=10, columnspan=90, sticky=W+E+N+S)
+        self.frameActionRow.grid(row=40, column=10, columnspan=90, sticky=W+E+N+S)
         self.frameActionRow.columnconfigure(40, weight=1)
         self.frameActionRow.columnconfigure(60, weight=1)
 
@@ -50,6 +50,7 @@ class mainWindow(object):
         self.CreateGUI_List()
 
         self.CreateGuiBasic()
+        self.CreateGUI_Filters()
         self.CreateGuiActionsBar()
 
         self.master.columnconfigure(1, minsize=5)
@@ -130,8 +131,6 @@ class mainWindow(object):
 
         
     def CreateGUI_ComPort(self):
-
-
         print ("mainWindow.CreateGUI_ComPort(self)")
         lab = Label(self.frameFirstRow, text="Port:")
         lab.grid(row=10, column=10, sticky=N+S)
@@ -153,6 +152,74 @@ class mainWindow(object):
         ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
         defaultCheckBox(self.checkBoxAutoconnect)
         self.checkConnected()
+
+     
+    def CreateGUI_Filters(self):
+        print ("mainWindow.CreateGUI_Filters(self)")
+        #row 20
+        self.editVarFilter = StringVar()
+        self.editVarFilter.set(self.filtr.filtrLine)
+        self.editVarFilter.trace("w", lambda name, index, mode, sv=self.editVarFilter: self.changeFilterEntryCallback(sv, "filtr"))
+        self.e_filter = Entry(self.master, textvariable=self.editVarFilter)
+        defaultEditBox(self.e_filter)
+        self.e_filter.grid(row=20, column=20, columnspan=310, sticky=W+E)
+        ToolTip( self.e_filter, msg="Only lines with at least one of these words are displayed. Format is as follows: \'word1,word2,word3\'. \nWords can be regular expressions (eg. If only lines with A and B on one line should be displayed, then command is \'A.*B\', where .* stand for anything.)\n This is case sensitive \n If backround is red, it is not used. If background is orange, filter is used, but is it empty - that means: nothing will be displayed (but if errors or warnnings checkbox is checked, errors or warnnings will be)." ,follow=True, delay=1.2)
+        
+        self.c_filtervar = IntVar()
+        self.c_filter = Checkbutton(self.master, text="Filter:", command=self.changeInFilter, variable=self.c_filtervar)
+        defaultCheckBox(self.c_filter)
+        self.c_filter.grid(row=20, column=10, padx=5, sticky=W)
+        if self.filtr.enableFilter:
+            self.c_filter.select()
+        ToolTip( self.c_filter, msg="Use filter or display everything when unchecked (but exclude is still used if checked). \nIf unchecked, it means that the filter is skipped." ,follow=True, delay=1.2)
+        self.changeInFilter()
+        
+        #ROW 30
+        self.editVarIgnore = StringVar()
+        self.editVarIgnore.set(self.filtr.ignoreLine)
+        self.editVarIgnore.trace("w", lambda name, index, mode, sv=self.editVarIgnore: self.changeFilterEntryCallback(sv, "ignore"))
+        self.e_exclude = Entry(self.master, textvariable=self.editVarIgnore)
+        defaultEditBox(self.e_exclude)
+        self.e_exclude.grid(row=30, column=20, columnspan=310, sticky=W+E)
+        ToolTip( self.e_exclude, msg="Lines with at least on of these words will not be displayed. Format is as follows: \'word1,word2,word3\'. \nWords can be regular expressions (eg. If only lines with A and B on one line should not be displayed, then command is \'A.*B\', where .* stand for anything.) \nThis settings does not apply for warning/error checkboxes on the top right! If you want to filter errors and warning put WARN/ERROR in filter editbox and disable checboxes. Things will work as you expect. This is becouse errors and warnnigs should not appear, and when they appear, something is usualy wrong and you should know about it.\n This is case sensitive" ,follow=True, delay=1.2)
+        
+        self.c_excludevar = IntVar()
+        self.c_exclude = Checkbutton(self.master, text="Ignore:", command=self.changeInIgnore, variable=self.c_excludevar)
+        defaultCheckBox(self.c_exclude)
+        self.c_exclude.grid(row=30, column=10, padx=5, sticky=W)
+        if self.filtr.enableIgnore:
+            self.c_exclude.select()
+        ToolTip( self.c_exclude, msg="Use ignore filter.", follow=True, delay=1.2)
+        self.changeInIgnore()
+
+
+    def changeFilterEntryCallback(self, variable, settingsEntry):
+        self.settings['FilterCurrent'+self.myType][settingsEntry] = variable.get()
+        self.filtr.loadSettings()
+        pass
+
+
+    def changeInFilter(self):
+        print (str(self.c_filtervar.get()))
+        if self.c_filtervar.get() == 1:
+            self.settings['FilterCurrent'+self.myType]['enableFilter'] = "1"
+            self.e_filter.config(background="#FFFFFF")
+
+        else:
+            self.settings['FilterCurrent'+self.myType]['enableFilter'] = "0"
+            self.e_filter.config(background="#decccc")
+        self.filtr.loadSettings()
+        pass
+
+    def changeInIgnore(self):
+        if self.c_excludevar.get() == 1:
+            self.settings['FilterCurrent'+self.myType]['enableIgnore'] = "1"
+            self.e_exclude.config(background="#FFFFFF")
+        else:
+            self.settings['FilterCurrent'+self.myType]['enableIgnore'] = "0"
+            self.e_exclude.config(background="#decccc")
+        self.filtr.loadSettings()
+        pass
 
 
     def checkConnected(self):

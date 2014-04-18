@@ -39,7 +39,7 @@ class InputTester(genericinput.Input):
         data = []
 
         kind = "INFO "
-        if random.random() > 0.9:
+        if random.random() > 0.95:
             kind = "WARN "
             if random.random() > 0.6:
                 kind = "ERROR"

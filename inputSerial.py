@@ -60,7 +60,7 @@ class InputSerial(genericinput.Input):
 
     def getData(self):
         output = []
-        if self.Status() == False:
+        if self.connected == False:
             return []
 
 
