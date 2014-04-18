@@ -11,13 +11,13 @@
       "name": "Ohmterm",
       "shell": true,
       "working_dir": "${project_path}",
-      "cmd": ["python3", "ohmterm.py"]
+      "cmd": ["python3", "-u", "ohmterm.py"]
     },
     {
       "name": "OhmtermWork",
       "shell": true,
       "working_dir": "${project_path}",
-      "cmd": ["python", "ohmterm.py"]
+      "cmd": ["python", "-u", "ohmterm.py"]
     }
   ],
 }

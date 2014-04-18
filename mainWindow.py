@@ -109,6 +109,7 @@ class mainWindow(object):
         self.font_courier_bold = tkinter.font.Font ( family="Courier New", size=10, weight='bold')
         self.listView = Listbox(self.content, takefocus=True,selectmode=EXTENDED)
         defaultListBox(self.listView)
+        self.listView.config(font=self.font_courier)
         self.listView.grid(row=200, column=10, columnspan=890, sticky=W+E+N+S)
         
         #self.listView.bind('<Double-Button-1>', self.CopyModulName2)
