@@ -97,12 +97,12 @@ class Filter(object):
     # inputItem[3] - type
     def testLine(self, inputItem):
         ret = FilterReturnObject()
-        print (str(self.enableFilter) + " - FILTRY = " + str(self.filtr))
-        print (str(self.enableIgnore) + " - IGNORE = " + str(self.ignore))
+        # print (str(self.enableFilter) + " - FILTRY = " + str(self.filtr))
+        # print (str(self.enableIgnore) + " - IGNORE = " + str(self.ignore))
 
 
         line = inputItem[2]
-        print ("LINE: " + inputItem[2])
+        # print ("LINE: " + inputItem[2])
         if self.enableTime:
             #TODO time
             #if false, then return
@@ -111,7 +111,6 @@ class Filter(object):
             if self.enableFilter:
                 for oneRegexp in self.filtr:
                     if re.search(oneRegexp, line, re.IGNORECASE):
-                        print ("Found")
                         ret.shouldShow = True
                         break
                 

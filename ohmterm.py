@@ -123,6 +123,7 @@ class OhmTerm(object):
         
     def killProgram(self):
         print ("OhmTerm.killProgram()")
+        self.inputer.close()
         self.mainwindow.kill()
         self.writeConfig()
 
