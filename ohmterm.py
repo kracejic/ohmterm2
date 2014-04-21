@@ -28,7 +28,7 @@ class OhmTerm(object):
     """docstring for OhmTerm"""
     version1 = 2
     version2 = 0
-    version3 = 0
+    version3 = 1
     betaFlag = True
 
     datastore = []

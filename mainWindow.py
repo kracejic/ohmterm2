@@ -147,11 +147,21 @@ class mainWindow(object):
         defaultButton(self.buttonPortConnect)
         ToolTip( self.buttonPortConnect, msg="Connect to COM Port. If this is blue, app is probably connected.", follow=True, delay=1.2)
         
-        self.checkBoxAutoconnect = Checkbutton(self.frameFirstRow, text="Autoconnect")
+        self.checkBoxAutoconnectVar = IntVar()
+        self.checkBoxAutoconnect = Checkbutton(self.frameFirstRow, text="Autoconnect", command=self.checkBoxAutoconnectFunc, variable=self.checkBoxAutoconnectVar)
         self.checkBoxAutoconnect.grid(row=10, column=16, sticky=N+S)
         ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
         defaultCheckBox(self.checkBoxAutoconnect)
+        if self.settings.getboolean('input',"autoconnect" , fallback=False) == True:
+            self.checkBoxAutoconnect.select()
         self.checkConnected()
+
+    def checkBoxAutoconnectFunc(self):
+        if self.checkBoxAutoconnectVar.get() == 1:
+            self.settings['input']['autoconnect'] = "1"
+        else:
+            self.settings['input']['autoconnect'] = "0"
+        pass
 
      
     def CreateGUI_Filters(self):

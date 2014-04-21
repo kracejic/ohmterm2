@@ -57,6 +57,7 @@ class InputStrategy(object):
         return self.inputer.getAddress();
 
     def open(self, address):
+        print("InputStrategy.open (" + str(address) + ")")
         return self.inputer.open(address)
 
     def close(self):
