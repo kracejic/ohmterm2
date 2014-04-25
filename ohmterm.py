@@ -88,7 +88,8 @@ class OhmTerm(object):
             traceback.print_exc()
 
 
-        self.root.after(80, self.inputTask)
+        # self.root.after(80, self.inputTask)
+        self.root.after(40, self.inputTask)
         pass
 
     def pushDataToWindow(self, data, window):
