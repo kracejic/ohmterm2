@@ -13,7 +13,7 @@ import tkinter.font
 import filter
 import settingsWindow
 from defaultSkin import *
-
+from tkinter import filedialog
 
 
 class mainWindow(object):
@@ -55,6 +55,7 @@ class mainWindow(object):
         self.CreateGUI_Filters()
         self.CreateGuiActionsBar()
 
+
         self.master.columnconfigure(1, minsize=5)
         self.master.columnconfigure(6000, minsize=5) #mezera na konci
         self.master.columnconfigure(35, weight=1)
@@ -69,6 +70,7 @@ class mainWindow(object):
         self.master.bind('<Control-End>', self.OnMoveWithKeysDOWNEND)
 
         self.master.bind('<Control-r>', self.refreshQuick)
+        self.master.bind('<Control-a>', self.selectAll)
         self.master.bind('<F5>', self.refreshQuick)
         
         self.master.bind('<Control-e>', self.clear)
@@ -106,9 +108,12 @@ class mainWindow(object):
         self.buttonDelete.grid(row=10, column=46)
 
         self.iconSave = PhotoImage(file="data/save.gif")
-        self.buttonSave = Button(self.frameActionRow, text="clear", image=self.iconSave, command=self.clear)
+        self.buttonSave = Button(self.frameActionRow, text="clear", image=self.iconSave, command=self.ohmterm.saveDatastore)
         self.buttonSave.grid(row=10, column=85)
         defaultButton(self.buttonSave)
+
+
+
 
 
 
@@ -281,6 +286,10 @@ class mainWindow(object):
         self.listView.delete(0, END)
 
 
+    def selectAll(self, *args):
+        self.listView.select_set(0, END)
+
+
     def deleteDatastore(self):
         self.clear()
         self.ohmterm.deleteDatastore()
@@ -310,6 +319,8 @@ class mainWindow(object):
                     self.autoscroll = True
         self.listView.yview(*args)
     
+    def LookAtTheTop(self):
+        self.listView.yview(0)
 
     def onMouseScrollUp(self, event):
         self.autoscroll = False

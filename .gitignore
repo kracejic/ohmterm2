@@ -3,3 +3,6 @@
 test.py
 *TODO
 *workspace
+testFiles/*
+*dmp
+plugins/siemens*

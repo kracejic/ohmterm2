@@ -99,7 +99,8 @@ class Filter(object):
         ret = FilterReturnObject()
         # print (str(self.enableFilter) + " - FILTRY = " + str(self.filtr))
         # print (str(self.enableIgnore) + " - IGNORE = " + str(self.ignore))
-
+        ret.colorText = inputItem[4]
+        ret.colorBg = inputItem[5]
 
         line = inputItem[2]
         # print ("LINE: " + inputItem[2])
@@ -123,7 +124,7 @@ class Filter(object):
 
             #coloring + force display ERRORS/WARNS
             if inputItem[3] == 'e':
-                ret.ColorText = '#FF0000'
+                ret.colorText = '#FF0000'
                 ret.colorBg = "#FFbbbb"
                 ret.bold = True
                 if self.enableErrors:
@@ -131,7 +132,7 @@ class Filter(object):
                     return ret
             else:
                 if inputItem[3] == 'w':
-                    ret.ColorText = '#dd8800'
+                    ret.colorText = '#dd8800'
                     ret.colorBg = "#FFbbbb"
                     ret.bold = True
                     if self.enableWarnings:

@@ -31,4 +31,9 @@ class Input(object):
     def getAddress(self):
         return self.settings.get(self.kind, 'address', fallback="0")
 
+class InputSerial(Input):
+    def __init__(self, settings):
+        super(Input, self).__init__()
+        print("Input init, kind=" + self.kind)
+        self.settings = settings
         
