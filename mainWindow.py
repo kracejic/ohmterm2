@@ -86,6 +86,7 @@ class mainWindow(object):
     
 
     def CreateGuiActionsBar(self):
+        print ("mainWindow.CreateGuiActionsBar(self)")
         self.iconRefresh = PhotoImage(file="data/refresh.gif")
         self.buttonRefreshAll = Button(self.frameActionRow, text="clear", image=self.iconRefresh, command=self.refreshQuick)
         self.buttonRefreshAll.grid(row=10, column=10)
@@ -118,6 +119,7 @@ class mainWindow(object):
 
 
     def CreateGUI_List(self):
+        print ("mainWindow.CreateGUI_List(self)")
         self.content = Frame(self.master, height=2, bd=1, relief=RAISED)
         defaultFrameClean(self.content)
         self.content.grid(row=200, column=10, sticky=W+E+N+S,  columnspan=90)
@@ -240,7 +242,7 @@ class mainWindow(object):
 
 
     def changeInFilter(self):
-        print (str(self.c_filtervar.get()))
+        # print (str(self.c_filtervar.get()))
         if self.c_filtervar.get() == 1:
             self.settings['FilterCurrent'+self.myType]['enableFilter'] = "1"
             self.e_filter.config(background="#FFFFFF")

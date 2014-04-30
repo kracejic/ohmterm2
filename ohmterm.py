@@ -1,4 +1,5 @@
-#! python3
+#! python3.3
+
 import sys
 try:
     from tkinter import *
@@ -60,9 +61,12 @@ class OhmTerm(object):
 
         #creating input
         self.inputer = inputStrategy.InputStrategy(self.settings)
-
         #creating decomposer
         self.decomposer = decomposer.Decomposer(self.settings)
+
+        self.loadPlugins()
+
+
 
         #creating window
         self.root = Tk()
@@ -73,7 +77,7 @@ class OhmTerm(object):
         self.root.tk.call('wm', 'iconphoto', self.root._w, img)
         self.windows = [self.mainwindow]
 
-        self.loadPlugins()
+        self.loadPluginsPostGui()
 
         self.root.after(1000, self.inputTask)
         self.root.mainloop()
@@ -191,9 +195,9 @@ class OhmTerm(object):
             location = os.path.join(PluginFolder, i)
             if  location.endswith(".py"):
                 # print ("Plugins: " + location)
-                print ("Plugins: " + i.strip(".py"))
+                print ("OhmTerm.Loading plugin: " + i.strip(".py"))
                 foundPlugin = imp.find_module(i.strip(".py"), [PluginFolder])
-                print(str(foundPlugin))
+                # print(str(foundPlugin))
                 name = i.strip(".py")
                 self.plugins[name] = {"foundPlugin": foundPlugin}
 
@@ -202,8 +206,12 @@ class OhmTerm(object):
                 self.plugins[name] ["loadedPlugin"] = loadedPlugin
 
                 #init of plugin
-                loadedPlugin.initPluginPost(self)
+                self.plugins[name] ["initedPlugin"] = loadedPlugin.initPluginPre(self)
+                print ("OhmTerm.Loading plugin: " + i.strip(".py") + " ... done")
 
+    def loadPluginsPostGui(self):
+        for p in self.plugins:
+            self.plugins[p]["loadedPlugin"].initPluginPost(self)
 
 
 
