@@ -10,7 +10,17 @@ except:
 
 
 import genericinput
+import traceback
+from tkinter import messagebox
 
+try:
+  import serial
+except:
+    pass
+    messagebox.showerror(
+    "Error",
+    "PySerial not found!\nPlease download and install it in order to run this script.\nYou can find it at http://pyserial.sourceforge.net/"
+    )
 
 # 21.02.2012 16:12:15.984 009907 MenuProc        DEBUG: ** evMenuProcConfirmCmd (scheduled)
 # 21.02.2012 16:12:15.994 009908 MenuProc        DEBUG: << evMenuProcConfirmCmd (consumed)
@@ -67,7 +77,7 @@ class InputSerial(genericinput.Input):
         for z in range(800):
             try:
                 line = self.ser.readline()   # read a '\n' terminated line
-                if line != "":
+                if len(line) > 0:
                     if ord(line[0]) != 13:
                         #print ("1line:"+  line)
                         #print ("ord: ", ord(line[-2]))
@@ -90,6 +100,7 @@ class InputSerial(genericinput.Input):
                 print ("ERROR: InputSerial - reading error :(")
                 traceback.print_exc(file=sys.stdout)
                 self.close()
+                return output
 
         self.toomuchdata = 1
         return output    

@@ -11,7 +11,10 @@ class Decomposer(object):
         self.settings = settings
         print ("Decomposer.__init__()")
 
+        self.strategies = {"None":decomposeStrategyNone, "PDM7":decomposeStrategyPDM7, "Ohm":decomposeStrategyOhmStandard1}
+
         self.setStrategy( self.settings.get('input', 'defaultDecomposer', fallback=self.defaultStrategy) )
+
 
     def decompose(self, rawData):
         data = []
@@ -20,26 +23,25 @@ class Decomposer(object):
         return data
 
     def getAvailableStrategies(self):
-        return ["None", "PDM7", "Ohm"]
+        return self.strategies.keys()
+
+    def addStrategy(self, name, func):
+        self.strategies[name] = func;
 
     def getStrategy(self):
         return self.selectedStrategy
 
     def setStrategy(self, strategy):
         print ("Decomposer.setStrategy('"+strategy+"')")
-        if strategy == "None":
-            self.strategy = decomposeStrategyNone
-        elif strategy == "PDM7":
-            self.strategy = decomposeStrategyPDM7
-        elif strategy == "Ohm":
-            self.strategy = decomposeStrategyOhmStandard1
+        if strategy in self.strategies.keys():
+            self.strategy = self.strategies[strategy]
+            self.selectedStrategy = strategy
         else:
             print ("Decomposer.setStrategy ERROR: not found ('"+strategy+"')")
             self.setStrategy(self.defaultStrategy)
             return False
         
         self.settings['input']['defaultDecomposer'] = strategy
-        self.selectedStrategy = strategy
         return True
 
 
@@ -53,10 +55,10 @@ import time
 
 #strategies for decomposing
 def decomposeStrategyNone(text):
-    return [0, "None", text, "d"]
+    return [0, "None", text, "d", "#000000", "#FFFFFF"]
 
 def decomposeStrategyPDM7(text):
-    return [0, "None", text, "d"]
+    return [0, "None", text, "d", "#000000", "#FFFFFF"]
 
 def decomposeStrategyOhmStandard1(text):
     splited = text.split()
@@ -75,4 +77,4 @@ def decomposeStrategyOhmStandard1(text):
         print ("decomposeStrategyOhmStandard1() ERROR: time convert failed")
         pass
 
-    return [timstamp, splited[2], text, kind]
+    return [timstamp, splited[2], text, kind, "#000000", "#FFFFFF"]

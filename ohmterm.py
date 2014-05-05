@@ -1,19 +1,25 @@
+#! python3.3
+
 import sys
 try:
     from tkinter import *
 except:
     try:
-            from Tkinter import *
+        from Tkinter import *
     except:
         print ("Tkinter lib is missing.")
         sys.exit()
     
 import configparser
+from tkinter import messagebox
+from tkinter import filedialog
 
 import inputStrategy
 import decomposer
 import mainWindow
 import traceback
+import imp
+import os
 
 
 
@@ -28,8 +34,8 @@ class OhmTerm(object):
     """docstring for OhmTerm"""
     version1 = 2
     version2 = 0
-    version3 = 0
-    betaFlag = True
+    version3 = 2
+    betaFlag = False
 
     datastore = []
     settingsFileName = "config.ini"
@@ -53,12 +59,14 @@ class OhmTerm(object):
         self.settings["main"]["v3"] = str(self.version3)
         self.settings["main"]["vBeta"] = str(self.betaFlag)
 
-
         #creating input
         self.inputer = inputStrategy.InputStrategy(self.settings)
-
         #creating decomposer
         self.decomposer = decomposer.Decomposer(self.settings)
+
+        self.loadPlugins()
+
+
 
         #creating window
         self.root = Tk()
@@ -67,7 +75,9 @@ class OhmTerm(object):
         self.mainwindow = mainWindow.mainWindow(self.root, "main", self.datastore, self.settings, self)
         img = PhotoImage(file='data/ohmterm.gif')
         self.root.tk.call('wm', 'iconphoto', self.root._w, img)
+        self.windows = [self.mainwindow]
 
+        self.loadPluginsPostGui()
 
         self.root.after(1000, self.inputTask)
         self.root.mainloop()
@@ -80,16 +90,13 @@ class OhmTerm(object):
             rawData = self.inputer.getData()
             decomposedData = self.decomposer.decompose(rawData)
             self.datastore = self.datastore + decomposedData
-
             self.pushDataToWindow(decomposedData, self.mainwindow)
-
         except Exception as ex:
             print("ERROR")
             traceback.print_exc()
-
-
-        self.root.after(80, self.inputTask)
+        self.root.after(50, self.inputTask)
         pass
+
 
     def pushDataToWindow(self, data, window):
         for item in data:
@@ -101,12 +108,20 @@ class OhmTerm(object):
         self.datastore[:] = []
         
 
-
+    def allWindowsLookAtTop(self):
+        for win in self.windows:
+            win.LookAtTheTop()
+    def refreshAllWindowsAll(self):
+        for win in self.windows:
+            self.refreshAll(win)
     def refreshAll(self, window):
         print ("OhmTerm.refreshAll - " + window.myType)
         self.pushDataToWindow(self.datastore, window)
 
 
+    def refreshAllWindowsQuick(self):
+        for win in self.windows:
+            self.refreshQuick(win)
     def refreshQuick(self, window):
         print ("OhmTerm.refreshQuick - " + window.myType)
         count = 0
@@ -147,8 +162,57 @@ class OhmTerm(object):
         self.createSettingsIfNotExisted("none")
         self.createSettingsIfNotExisted("udp")
         self.createSettingsIfNotExisted("com")
-        self.createSettingsIfNotExisted("FilterDefault")
         self.createSettingsIfNotExisted("FilterCurrentmain")
+
+
+    def saveDatastore(self):
+        # filename = tkfiledialog.asksaveasfilename(defaultextension="hterm", title="Save as (all)", initialdir=self.savepath)
+        filename = filedialog.asksaveasfilename(defaultextension="log", title="Save as (all)")
+        if filename == '':
+            return
+
+        print ("OhmTerm.saveDatastore - Saving to: " + filename)
+        # print ('\nWriting output to '+ output_filename)
+        outputh = open(filename,'w')  
+        for line in self.datastore :
+            outputh.write( line[2] + '\n' )
+        outputh.close()
+        print (' ... done\n')
+        self.savepath = filename
+        
+        return
+
+
+
+    def loadPlugins(self):
+        PluginFolder = "./plugins"
+        MainModule = "initPlugin"
+
+        self.plugins = {}
+
+        possibleplugins = os.listdir(PluginFolder)
+        for i in possibleplugins:
+            location = os.path.join(PluginFolder, i)
+            if  location.endswith(".py"):
+                # print ("Plugins: " + location)
+                print ("OhmTerm.Loading plugin: " + i.strip(".py"))
+                foundPlugin = imp.find_module(i.strip(".py"), [PluginFolder])
+                # print(str(foundPlugin))
+                name = i.strip(".py")
+                self.plugins[name] = {"foundPlugin": foundPlugin}
+
+                #loading plugin
+                loadedPlugin = imp.load_module(i.strip(".py"), foundPlugin[0], "./plugins", foundPlugin[2])
+                self.plugins[name] ["loadedPlugin"] = loadedPlugin
+
+                #init of plugin
+                self.plugins[name] ["initedPlugin"] = loadedPlugin.initPluginPre(self)
+                print ("OhmTerm.Loading plugin: " + i.strip(".py") + " ... done")
+
+    def loadPluginsPostGui(self):
+        for p in self.plugins:
+            self.plugins[p]["loadedPlugin"].initPluginPost(self)
+
 
 
 ohmTermApp = OhmTerm()

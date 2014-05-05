@@ -13,7 +13,7 @@ import tkinter.font
 import filter
 import settingsWindow
 from defaultSkin import *
-
+from tkinter import filedialog
 
 
 class mainWindow(object):
@@ -25,6 +25,8 @@ class mainWindow(object):
         self.settings = settings;
         self.myType = myType
         self.ohmterm = ohmterm
+        self.autoscroll = True
+        self.scroll_wasdown = True
         print ("mainWindow.__init__(myType="+myType+")")
         self.master.title("Ohmterm "+self.settings["main"]["version"])
         defaultFrameClean( self.master)
@@ -53,10 +55,25 @@ class mainWindow(object):
         self.CreateGUI_Filters()
         self.CreateGuiActionsBar()
 
+
         self.master.columnconfigure(1, minsize=5)
         self.master.columnconfigure(6000, minsize=5) #mezera na konci
         self.master.columnconfigure(35, weight=1)
         self.master.columnconfigure(95, weight=1)
+
+
+        self.master.bind('<Up>', self.OnMoveWithKeysUP)
+        self.master.bind('<Down>', self.OnMoveWithKeysDOWN)
+        self.master.bind('<Prior>', self.OnMoveWithKeysUP)
+        self.master.bind('<Next>', self.OnMoveWithKeysDOWN)
+        self.master.bind('<Control-Home>', self.OnMoveWithKeysUP)
+        self.master.bind('<Control-End>', self.OnMoveWithKeysDOWNEND)
+
+        self.master.bind('<Control-r>', self.refreshQuick)
+        self.master.bind('<Control-a>', self.selectAll)
+        self.master.bind('<F5>', self.refreshQuick)
+        
+        self.master.bind('<Control-e>', self.clear)
 
         #refresh settings
         self.filtr.loadSettings()
@@ -69,6 +86,7 @@ class mainWindow(object):
     
 
     def CreateGuiActionsBar(self):
+        print ("mainWindow.CreateGuiActionsBar(self)")
         self.iconRefresh = PhotoImage(file="data/refresh.gif")
         self.buttonRefreshAll = Button(self.frameActionRow, text="clear", image=self.iconRefresh, command=self.refreshQuick)
         self.buttonRefreshAll.grid(row=10, column=10)
@@ -91,13 +109,17 @@ class mainWindow(object):
         self.buttonDelete.grid(row=10, column=46)
 
         self.iconSave = PhotoImage(file="data/save.gif")
-        self.buttonSave = Button(self.frameActionRow, text="clear", image=self.iconSave, command=self.clear)
+        self.buttonSave = Button(self.frameActionRow, text="clear", image=self.iconSave, command=self.ohmterm.saveDatastore)
         self.buttonSave.grid(row=10, column=85)
         defaultButton(self.buttonSave)
 
 
 
+
+
+
     def CreateGUI_List(self):
+        print ("mainWindow.CreateGUI_List(self)")
         self.content = Frame(self.master, height=2, bd=1, relief=RAISED)
         defaultFrameClean(self.content)
         self.content.grid(row=200, column=10, sticky=W+E+N+S,  columnspan=90)
@@ -113,9 +135,19 @@ class mainWindow(object):
         self.listView.config(font=self.font_courier)
         self.listView.grid(row=200, column=10, columnspan=890, sticky=W+E+N+S)
         
+
+        #TODO scroll button
+        # self.listView.bind('<MouseWheel>', self.onMouseScroll)
+        #attach scrollbar to listView
+        self.listView.bind('<Button-4>', self.onMouseScrollUp)
+        self.listView.bind('<Button-5>', self.onMouseScrollDown)
+        self.listView.config(yscrollcommand=self.scrollbar.set)
+        self.listView.activate(0)
+
+        #TODO keys
         #self.listView.bind('<Double-Button-1>', self.CopyModulName2)
         #self.listView.bind('<Double-Button-3>', self.CopyModulName3)
-        #self.listView.bind('<Button-2>', self.CopyDebugText)
+        # self.seznam.bind('<Button-2>', self.CopyDebugText)
 
         self.content.rowconfigure(190, pad=8)
         self.content.rowconfigure(200, weight=1)
@@ -147,11 +179,21 @@ class mainWindow(object):
         defaultButton(self.buttonPortConnect)
         ToolTip( self.buttonPortConnect, msg="Connect to COM Port. If this is blue, app is probably connected.", follow=True, delay=1.2)
         
-        self.checkBoxAutoconnect = Checkbutton(self.frameFirstRow, text="Autoconnect")
+        self.checkBoxAutoconnectVar = IntVar()
+        self.checkBoxAutoconnect = Checkbutton(self.frameFirstRow, text="Autoconnect", command=self.checkBoxAutoconnectFunc, variable=self.checkBoxAutoconnectVar)
         self.checkBoxAutoconnect.grid(row=10, column=16, sticky=N+S)
         ToolTip( self.checkBoxAutoconnect, msg="Autoconnect on start?", follow=True, delay=1.2)
         defaultCheckBox(self.checkBoxAutoconnect)
+        if self.settings.getboolean('input',"autoconnect" , fallback=False) == True:
+            self.checkBoxAutoconnect.select()
         self.checkConnected()
+
+    def checkBoxAutoconnectFunc(self):
+        if self.checkBoxAutoconnectVar.get() == 1:
+            self.settings['input']['autoconnect'] = "1"
+        else:
+            self.settings['input']['autoconnect'] = "0"
+        pass
 
      
     def CreateGUI_Filters(self):
@@ -200,7 +242,7 @@ class mainWindow(object):
 
 
     def changeInFilter(self):
-        print (str(self.c_filtervar.get()))
+        # print (str(self.c_filtervar.get()))
         if self.c_filtervar.get() == 1:
             self.settings['FilterCurrent'+self.myType]['enableFilter'] = "1"
             self.e_filter.config(background="#FFFFFF")
@@ -242,8 +284,12 @@ class mainWindow(object):
         self.settingsWindow = settingsWindow.SettingsWindow(self.settings, self.ohmterm)
 
 
-    def clear(self):
+    def clear(self, *args):
         self.listView.delete(0, END)
+
+
+    def selectAll(self, *args):
+        self.listView.select_set(0, END)
 
 
     def deleteDatastore(self):
@@ -251,20 +297,46 @@ class mainWindow(object):
         self.ohmterm.deleteDatastore()
 
 
-    def refreshAll(self):
+    def refreshAll(self, *args):
         self.clear()
         self.ohmterm.refreshAll(self)
         pass
 
 
-    def refreshQuick(self):
+    def refreshQuick(self, *args):
         self.clear()
         self.ohmterm.refreshQuick(self)
         pass
 
 
     def scrollin(self, *args): #scroll handling
+        print (args)
+        if self.autoscroll == False:
+            if self.scrollbar.get()[1] - self.scrollbar.get()[0] > 1.0 - self.scrollbar.get()[1]:
+                self.autoscroll = True
+        else:
+            self.autoscroll = False
+            if args[0] == 'scroll':
+                if args[1] == '1':
+                    self.autoscroll = True
         self.listView.yview(*args)
+    
+    def LookAtTheTop(self):
+        self.listView.yview(0)
+
+    def onMouseScrollUp(self, event):
+        self.autoscroll = False
+    def onMouseScrollDown(self, event):
+        if self.scrollbar.get()[1] == 1.0:
+            self.autoscroll = True
+    def OnMoveWithKeysUP(self, *args):
+        self.autoscroll = False
+    def OnMoveWithKeysDOWN(self, *args):
+        if self.scrollbar.get()[1] - self.scrollbar.get()[0] > 1.0 - self.scrollbar.get()[1]:
+            self.autoscroll = True
+    def OnMoveWithKeysDOWNEND(self, *args):
+        self.autoscroll = True
+     
 
 
     # class FilterReturnObject:
@@ -273,17 +345,19 @@ class mainWindow(object):
     #   bold = False
     #   shouldShow = False
     def insertData(self, item):
-        print ("mainWindow.insertData data = " + str(item))
+        # print ("mainWindow.insertData data = " + str(item))
         filtered = self.filtr.testLine(item)
         if filtered.shouldShow == True:
             self.listView.insert(END, item[2])
             self.listView.itemconfig(END, fg=filtered.colorText, bg=filtered.colorBg)
+            if self.autoscroll:
+                self.listView.yview(END)
         else:
             return False
         return True
 
     def insertDataAtTheStart(self, item):
-        print ("mainWindow.insertData data = " + str(item))
+        # print ("mainWindow.insertData data = " + str(item))
         filtered = self.filtr.testLine(item)
         if filtered.shouldShow == True:
             self.listView.insert(0, item[2])
