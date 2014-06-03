@@ -286,6 +286,7 @@ class mainWindow(object):
 
     def clear(self, *args):
         self.listView.delete(0, END)
+        self.OnMoveWithKeysDOWNEND()
 
 
     def selectAll(self, *args):

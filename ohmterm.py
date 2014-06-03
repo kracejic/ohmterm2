@@ -34,7 +34,7 @@ class OhmTerm(object):
     """docstring for OhmTerm"""
     version1 = 2
     version2 = 0
-    version3 = 2
+    version3 = 3
     betaFlag = False
 
     datastore = []
@@ -62,7 +62,7 @@ class OhmTerm(object):
         #creating input
         self.inputer = inputStrategy.InputStrategy(self.settings)
         #creating decomposer
-        self.decomposer = decomposer.Decomposer(self.settings)
+        self.decomposer = decomposer.Decomposer(self.settings, self)
 
         self.loadPlugins()
 
@@ -111,6 +111,9 @@ class OhmTerm(object):
     def allWindowsLookAtTop(self):
         for win in self.windows:
             win.LookAtTheTop()
+    def allWindowsClear(self):
+        for win in self.windows:
+            win.clear()
     def refreshAllWindowsAll(self):
         for win in self.windows:
             self.refreshAll(win)

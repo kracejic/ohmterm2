@@ -33,6 +33,7 @@ class InputUDP(genericinput.Input):
             self.connected = False
             print ("ERROR: InputUDP - opening socket FAILED")
             traceback.print_exc(file=sys.stdout)
+            return False
 
         self.connected = True
         return True

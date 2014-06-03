@@ -6,12 +6,18 @@ class Decomposer(object):
     """docstring for Decomposer"""
     defaultStrategy = "Ohm"
     selectedStrategy = defaultStrategy
-    def __init__(self, settings):
+    def __init__(self, settings, ohmterm):
         super(Decomposer, self).__init__()
+        self.settings = settings
         self.settings = settings
         print ("Decomposer.__init__()")
 
-        self.strategies = {"None":decomposeStrategyNone, "PDM7":decomposeStrategyPDM7, "Ohm":decomposeStrategyOhmStandard1}
+        self.ohmStrategy = OhmStandard(ohmterm)
+
+        self.strategies = {
+        "None":decomposeStrategyNone,
+         "PDM7":decomposeStrategyPDM7, 
+         "Ohm": self.ohmStrategy.decomposeStrategyOhmStandard1 }
 
         self.setStrategy( self.settings.get('input', 'defaultDecomposer', fallback=self.defaultStrategy) )
 
@@ -19,7 +25,11 @@ class Decomposer(object):
     def decompose(self, rawData):
         data = []
         for line in rawData:
-            data.append(self.strategy(line))
+            try:
+                data.append(self.strategy(line))
+            except Exception as ex:
+                print("ERROR decomposer")
+                traceback.print_exc()
         return data
 
     def getAvailableStrategies(self):
@@ -60,21 +70,43 @@ def decomposeStrategyNone(text):
 def decomposeStrategyPDM7(text):
     return [0, "None", text, "d", "#000000", "#FFFFFF"]
 
-def decomposeStrategyOhmStandard1(text):
-    splited = text.split()
-    kind = "d"
-    if splited[1][0] == "E":
-        kind = "e"
-    elif splited[1][0] == "W":
-        kind = "w"
 
-    timstamp = 0
-    try:
-        t = datetime.datetime.strptime("2014 "+splited[0]+"000","%Y %H:%M:%S.%f")
-        # print (t.time().strftime("%H:%M:%S.%f"))
-        timstamp = calendar.timegm(t.utctimetuple()) + t.microsecond  / 1000000.0
-    except:
-        print ("decomposeStrategyOhmStandard1() ERROR: time convert failed")
-        pass
+class OhmStandard(object):
+    """docstring for OhmStandard"""
+    def __init__(self, ohmterm):
+        super(OhmStandard, self).__init__()
+        self.ohmterm = ohmterm
+        
+    def decomposeStrategyOhmStandard1(self, text):
+        # print(text)
+        splited = text.split()
+        kind = "d"
+        ColorText = "#000000"
+        ColorBg = "#FFFFFF"
 
-    return [timstamp, splited[2], text, kind, "#000000", "#FFFFFF"]
+        if len(splited) < 3:
+            return [0, "None", text, kind, ColorText, ColorBg]
+
+        if len(splited[1])>0:
+            if splited[1][0] == "E":
+                kind = "e"
+            elif splited[1][0] == "W":
+                kind = "w"
+            elif splited[1][0] == "X":
+                if splited[2][0] == 'n': #empty line
+                    self.ohmterm.allWindowsClear()
+
+        if splited[2] == "OGRE":
+            ColorText = "#222"
+        # print(splited[2])
+
+        timstamp = 0
+        try:
+            t = datetime.datetime.strptime("2014 "+splited[0]+"000","%Y %H:%M:%S.%f")
+            # print (t.time().strftime("%H:%M:%S.%f"))
+            timstamp = calendar.timegm(t.utctimetuple()) + t.microsecond  / 1000000.0
+        except:
+            print ("decomposeStrategyOhmStandard1() ERROR: time convert failed")
+            pass
+
+        return [timstamp, splited[2], text, kind, ColorText, ColorBg]
