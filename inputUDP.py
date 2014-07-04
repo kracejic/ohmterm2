@@ -69,6 +69,8 @@ class InputUDP(genericinput.Input):
                 data = data + dd.split("\n")
         except BlockingIOError as e:
             pass
+        except UnicodeDecodeError as e:
+            pass
         except:
             print ("ERROR: InputUDP.getData - failed")
             traceback.print_exc(file=sys.stdout)

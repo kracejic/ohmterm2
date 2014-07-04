@@ -1,5 +1,6 @@
 *.ini
 *.pyc
+*.log
 test.py
 *TODO
 *workspace
