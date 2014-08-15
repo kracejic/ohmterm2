@@ -34,7 +34,7 @@ class OhmTerm(object):
     """docstring for OhmTerm"""
     version1 = 2
     version2 = 0
-    version3 = 3
+    version3 = 4
     betaFlag = False
 
     datastore = []
@@ -94,7 +94,7 @@ class OhmTerm(object):
         except Exception as ex:
             print("ERROR")
             traceback.print_exc()
-        self.root.after(50, self.inputTask)
+        self.root.after(1, self.inputTask)
         pass
 
 

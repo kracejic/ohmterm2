@@ -64,7 +64,7 @@ class InputUDP(genericinput.Input):
             x = 0
             while x < 100: 
                 x = x + 1
-                ddd, addr = self.sock.recvfrom(8192)
+                ddd, addr = self.sock.recvfrom(4096)
                 dd = ddd.decode('unicode_escape')
                 data = data + dd.split("\n")
         except BlockingIOError as e:
