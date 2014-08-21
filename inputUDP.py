@@ -33,6 +33,7 @@ class InputUDP(genericinput.Input):
             self.connected = False
             print ("ERROR: InputUDP - opening socket FAILED")
             traceback.print_exc(file=sys.stdout)
+            return False
 
         self.connected = True
         return True
@@ -63,10 +64,12 @@ class InputUDP(genericinput.Input):
             x = 0
             while x < 100: 
                 x = x + 1
-                ddd, addr = self.sock.recvfrom(8192)
+                ddd, addr = self.sock.recvfrom(4096)
                 dd = ddd.decode('unicode_escape')
                 data = data + dd.split("\n")
         except BlockingIOError as e:
+            pass
+        except UnicodeDecodeError as e:
             pass
         except:
             print ("ERROR: InputUDP.getData - failed")
